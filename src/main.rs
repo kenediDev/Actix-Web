@@ -1,19 +1,23 @@
-use actix_web::{App, HttpResponse, HttpServer, Responder, get, post, web};
+use actix_web::{App, HttpServer, Responder, web};
 
-#[post("/created")]
-async fn created() -> impl Responder {
-    HttpResponse::Ok().body("Created")
+async fn home() -> impl Responder {
+    "Kenedy Dev On Youtube"
 }
 
-#[get("/")]
-async fn home() -> impl Responder {
-    HttpResponse::Ok().body("Kenedy Dev On Youtube")
+async fn about() -> impl Responder {
+    "ini adalah url About"
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(created).service(home))
-        .bind(("127.0.0.1", 3000))?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope("/app")
+                .route("/home", web::get().to(home))
+                .route("/about", web::get().to(about)),
+        )
+    })
+    .bind(("localhost", 4000))?
+    .run()
+    .await
 }
